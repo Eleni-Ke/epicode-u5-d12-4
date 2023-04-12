@@ -25,6 +25,14 @@ const notValidProduct = {
   price: 10000,
 };
 
+const validName = {
+  name: "New Name",
+};
+
+const notValidName = {
+  name: null,
+};
+
 const invalidId = "123456123456123456123456";
 let validId;
 
@@ -89,5 +97,21 @@ describe("Test Products APIs", () => {
 
   it("Should test that DELETE /products/:productId returns 404 if the productId doesn't exist", async () => {
     await client.delete(`/products/${invalidId}`).expect(404);
+  });
+
+  it("Should test that PUT /products/:productId returns 404 if the productId doesn't exist", async () => {
+    await client.put(`/products/${invalidId}`).expect(404);
+  });
+
+  it("Should test that PUT /products/:productId returns 201 and a body", async () => {
+    const response = await client
+      .put(`/products/${validId}`)
+      .send(validName)
+      .expect(200);
+    expect(response.body._id).toBeDefined();
+  });
+
+  it("Should test that PUT /products/:productId returns 400 if a not valid product is provided in req.body", async () => {
+    await client.put(`/products/${validId}`).send(notValidName).expect(400);
   });
 });
